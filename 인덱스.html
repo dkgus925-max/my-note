@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>나만의 단어장</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Jua&display=swap">
+<style>
+:root{--bg:#eaf6fd;--card:#fff;--ink:#12365a;--mute:#5a7a94;--line:#d3e6f3;--ac:#2b8fd8;--ac-ink:#fff;--soft:#d9eefb;--warn:#d93a40;--wb:#2b8fd8;--wl:#bfe3f9;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1f2e;--card:#162c3f;--ink:#e8f3fb;--mute:#9db5c6;--line:#27425a;--ac:#5db6f2;--ac-ink:#06233a;--soft:#1d3b55;--warn:#ff8a8d}}
+:root[data-theme="dark"]{--bg:#0e1f2e;--card:#162c3f;--ink:#e8f3fb;--mute:#9db5c6;--line:#27425a;--ac:#5db6f2;--ac-ink:#06233a;--soft:#1d3b55;--warn:#ff8a8d}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.6 "Gowun Dodum","Malgun Gothic",system-ui,sans-serif;-webkit-tap-highlight-color:transparent}
+#app{max-width:480px;margin:0 auto;padding:18px 16px 110px}
+h1,h2,.en,.bt,.stats b{font-family:"Jua","Gowun Dodum",system-ui,sans-serif;font-weight:400;margin:0}
+h1.pt{font-size:26px;margin:4px 0 14px}
+h2{font-size:19px}
+button,input,select,textarea{font:inherit;color:inherit;touch-action:manipulation}
+:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+input,select,textarea{width:100%;min-height:46px;padding:11px 12px;background:var(--card);border:1.5px solid var(--line);border-radius:12px}
+textarea{resize:vertical}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:16px}
+.pri{background:var(--ac);color:var(--ac-ink);border:0;border-radius:14px;min-height:48px;padding:0 20px;font:400 17px "Jua",sans-serif;cursor:pointer}
+.sec{background:var(--card);border:1.5px solid var(--line);border-radius:12px;min-height:44px;padding:0 14px;cursor:pointer}
+.lk{background:none;border:0;color:var(--mute);min-height:40px;padding:0 6px;cursor:pointer;text-decoration:underline}
+.wide{width:100%;margin-top:18px}
+.mute{color:var(--mute);font-size:14px}
+small{color:var(--mute);font-size:13px}
+.hero{--wb:#fff;background:var(--ac);color:var(--ac-ink);border:0;border-radius:26px;padding:20px 18px 22px;position:relative;overflow:hidden}
+.hero h1{font-size:30px;margin-bottom:4px}
+.hero p{margin:0 0 14px;max-width:62%;font-size:15px;line-height:1.5}
+.hero .wh{position:absolute;right:-6px;top:14px;width:46%}
+.hero .pri{background:var(--ac-ink);color:var(--ac)}
+.whale{width:100%;height:auto}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0 6px}
+.stats div{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:10px 4px;text-align:center;font-size:13px;color:var(--mute)}
+.stats b{display:block;font-size:26px;color:var(--ac);line-height:1.2}
+.sh{display:flex;justify-content:space-between;align-items:center;margin:18px 0 8px}
+.chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px}
+.chip{flex:none;display:flex;align-items:center;gap:7px;min-height:42px;padding:0 14px;background:var(--card);border:1.5px solid var(--line);border-radius:99px;cursor:pointer}
+.chip i,.dot{width:12px;height:12px;border-radius:50%;flex:none}
+.chip span{font-size:13px;color:var(--mute)}
+.rl{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.rl button{width:100%;display:flex;align-items:center;gap:12px;text-align:left;padding:10px 12px;background:var(--card);border:1px solid var(--line);border-radius:16px;cursor:pointer}
+.th{width:44px;height:44px;border-radius:50%;background:var(--soft);display:grid;place-items:center;flex:none}
+.tx{flex:1;min-width:0;display:flex;flex-direction:column;line-height:1.35}
+.tx b{font-family:"Jua",sans-serif;font-weight:400;font-size:18px}
+.tx small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rl em{font-style:normal;font-size:12px;color:var(--mute)}
+.tb{display:flex;gap:8px;align-items:center}
+.tb select{flex:1;min-width:0}
+.ic{flex:none;width:46px;height:46px;border-radius:12px;border:1.5px solid var(--line);background:var(--card);font-size:20px;cursor:pointer}
+.ic:disabled{opacity:.4}
+.stage{perspective:1000px;margin:14px 0}
+.c3{position:relative;height:clamp(340px,56vh,420px);transition:transform .55s;transform-style:preserve-3d;cursor:pointer;border-radius:26px}
+.c3.flip{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;background:var(--card);border:1px solid var(--line);border-radius:26px;box-shadow:0 8px 24px rgba(18,54,90,.12);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:20px;text-align:center}
+.bk{transform:rotateY(180deg);background:var(--soft)}
+.bt{position:absolute;top:14px;left:14px;color:#fff;font-size:14px;padding:2px 12px;border-radius:99px;text-shadow:0 1px 1px rgba(0,0,0,.25)}
+.ib{width:170px;height:170px;border-radius:50%;background:var(--soft);display:grid;place-items:center}
+.ib.sm{width:88px;height:88px;background:var(--card)}
+.en{font-size:36px;line-height:1.2;word-break:break-all}
+.ko{font-size:22px;line-height:1.6;margin:0;word-break:keep-all;white-space:pre-wrap}
+.nav2{display:flex;justify-content:space-between;align-items:center;color:var(--mute)}
+.nav2 .sec{min-width:96px}
+.del{display:block;margin:10px auto 0}
+.del.arm,.bl .arm{color:var(--warn)}
+.empty{text-align:center;margin-top:16px}
+.empty .whale{width:140px}
+.fm{display:grid;gap:14px;margin-bottom:14px}
+.fm label,.fm legend{font-size:14px;color:var(--mute);display:grid;gap:5px}
+fieldset{border:0;padding:0;margin:0}
+.ig{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:5px}
+.io{display:flex;flex-direction:column;align-items:center;gap:0;padding:6px 0 3px;background:var(--card);border:1.5px solid var(--line);border-radius:12px;cursor:pointer}
+.io small{font-size:11px}
+.io.on{border-color:var(--ac);background:var(--soft)}
+#msg{margin:0;min-height:1.4em;font-size:14px;color:var(--ac)}
+.bl{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.bl li{display:flex;align-items:center;gap:10px;padding:12px}
+.bi{flex:1;min-width:0}
+.bi input{min-height:40px;padding:6px 10px;font-family:"Jua",sans-serif;font-size:18px;border-color:transparent;background:transparent}
+.bi input:focus{border-color:var(--line);background:var(--bg)}
+.bi small{padding-left:10px}
+.bl .lk{font-size:13px;max-width:92px;line-height:1.3;text-align:right}
+.bn{position:fixed;left:0;right:0;bottom:0;z-index:5;background:var(--card);border-top:1px solid var(--line);padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px))}
+.bn div{max-width:480px;margin:0 auto;display:flex}
+.bn button{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;min-height:52px;background:none;border:0;border-radius:12px;font-size:12px;color:var(--mute);cursor:pointer}
+.bn svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.bn button.on{color:var(--ac);background:var(--soft)}
+.seg{display:flex;gap:6px;background:var(--soft);border-radius:14px;padding:4px;margin-bottom:14px}
+.seg button{flex:1;min-height:42px;border:0;border-radius:11px;background:none;color:var(--mute);cursor:pointer}
+.seg button.on{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(18,54,90,.18)}
+.xt{overflow-x:auto}
+.xt table{border-collapse:collapse;font-size:13px;width:100%}
+.xt th,.xt td{border:1px solid var(--line);padding:5px 8px;text-align:left;white-space:nowrap}
+.xt th{background:var(--soft)}
+.fm .fl{display:block;position:relative;color:inherit;font-size:inherit}
+.fl .pri{display:flex;align-items:center;justify-content:center;cursor:pointer}
+.vh{position:absolute;opacity:0;width:1px;height:1px}
+.fl:focus-within .pri{outline:2px solid var(--ac);outline-offset:2px}
+.pv{display:grid;gap:8px}
+.rr{display:flex;align-items:center;gap:12px;padding:8px 12px;background:var(--card);border:1px solid var(--line);border-radius:16px}
+@media(prefers-reduced-motion:reduce){.c3{transition:none}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<nav class="bn" aria-label="메뉴"><div>
+<button data-a="go" data-v="home"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-8 9 8v10H3z"/><path d="M9 21v-6h6v6"/></svg>홈</button>
+<button data-a="go" data-v="cards"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 10h6M7 14h4"/></svg>단어장</button>
+<button data-a="go" data-v="add"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/></svg>단어등록</button>
+<button data-a="go" data-v="books"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12v18l-6-4-6 4z"/></svg>책갈피</button>
+</div></nav>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+const $=s=>document.querySelector(s);
+const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const iso=n=>{const d=new Date(Date.now()-n*864e5);return new Date(d-d.getTimezoneOffset()*6e4).toISOString().slice(0,10)};
+const TODAY=()=>iso(0);
+const COLORS=["#2b8fd8","#f08a5d","#3cc3a8","#8b7be8","#e0a51e"];
+const ILL={
+heart:["심장",'<path d="M32 55C9 40 6 25 14 17c6-6 14-3 18 3 4-6 12-9 18-3 8 8 5 23-18 38z" fill="#f2707a"/><path d="M20 24c2-3 5-4 8-3" stroke="#fff" opacity=".7"/>'],
+lung:["폐",'<path d="M32 8v24"/><path d="M29 16c-10-3-16 4-17 14l-3 18c-1 5 3 8 8 6l8-4c3-1 4-4 4-7z" fill="#f59ab0"/><path d="M35 16c10-3 16 4 17 14l3 18c1 5-3 8-8 6l-8-4c-3-1-4-4-4-7z" fill="#f59ab0"/>'],
+brain:["뇌",'<path d="M20 46c-8 0-13-6-11-13-4-6 0-15 9-15 2-7 11-9 14-4 4-5 13-3 15 4 9 0 13 9 9 15 2 7-3 13-11 13z" fill="#c8a8f2"/><path d="M32 16v30M22 28c4 0 6 2 6 5M42 28c-4 0-6 2-6 5"/>'],
+kidney:["신장",'<path d="M40 9c-15-3-27 8-25 25s14 22 26 17c7-3 2-10-3-12-6-3-6-10 0-13 6-3 8-14 2-17z" fill="#e8806b"/>'],
+bone:["뼈",'<g transform="rotate(-45 32 32)" fill="#f6ebd0"><rect x="19" y="27" width="26" height="10" rx="3"/><circle cx="17" cy="26" r="6"/><circle cx="17" cy="38" r="6"/><circle cx="47" cy="26" r="6"/><circle cx="47" cy="38" r="6"/></g>'],
+stomach:["위",'<path d="M26 9h8v10c0 6 14 6 18 18 3 11-6 19-20 19-12 0-20-6-20-16 0-9 8-11 12-15 2-2 2-6 2-16z" fill="#f4ad63"/>'],
+blood:["혈액",'<path d="M32 8C23 21 16 30 16 40a16 16 0 0 0 32 0c0-10-7-19-16-32z" fill="#e5484d"/><path d="M24 42a8 8 0 0 0 6 8" stroke="#fff" opacity=".8"/>'],
+syringe:["주사기",'<g transform="rotate(45 32 32)"><rect x="27" y="30" width="10" height="14" fill="#6fd6c4" stroke="none"/><rect x="26" y="16" width="12" height="28" rx="2"/><path d="M32 6v10M25 16h14M26 30h5M32 44v14"/></g>'],
+steth:["청진기",'<path d="M16 8v16a14 14 0 0 0 28 0V8" stroke-width="3"/><path d="M30 38v6a9 9 0 0 0 18 0v-2" stroke-width="3"/><circle cx="48" cy="38" r="6" fill="#ffd35a"/>'],
+pill:["알약",'<g transform="rotate(-40 32 32)"><rect x="10" y="22" width="44" height="20" rx="10" fill="#fff"/><path d="M32 22h12a10 10 0 0 1 0 20H32z" fill="#6fd6c4"/></g>']
+};
+const ill=(k,s)=>`<svg viewBox="0 0 64 64" width="${s}" height="${s}" fill="none" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true">${(ILL[k]||ILL.pill)[1]}</svg>`;
+const WHALE='<svg class="whale" viewBox="0 0 120 80" aria-hidden="true" stroke="var(--ink)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"><path d="M52 16c-4-8 0-14 4-14M62 16c4-8 0-14-4-14" fill="none" stroke="#7cc6ee" stroke-width="3"/><path d="M104 42c8-2 12-10 12-18 6 4 6 14 0 20-4 4-10 4-12 0z" fill="var(--wb)"/><path d="M8 48C8 26 30 16 58 16s46 12 48 32c0 10-10 18-40 18S8 62 8 48z" fill="var(--wb)"/><path d="M14 54c22 10 62 10 90-6" fill="none"/><path d="M16 56c20 8 56 8 84-4 0 8-14 14-34 14S20 64 16 56z" fill="var(--wl)" stroke="none"/><circle cx="30" cy="40" r="3.2" fill="var(--ink)" stroke="none"/><circle cx="41" cy="49" r="4" fill="#ff9fb2" stroke="none"/></svg>';
+
+let D=null;
+try{D=JSON.parse(localStorage.getItem("mw-v1"))}catch(e){}
+if(!D||!D.books){
+  D={books:[{id:1,name:"해부",color:COLORS[0]},{id:2,name:"증상",color:COLORS[1]},{id:3,name:"질환",color:COLORS[3]}],words:[],nid:10};
+  "1|cardiac|심장의, 심장과 관련된|heart|0;1|pulmonary|폐의, 폐와 관련된|lung|0;1|renal|신장의|kidney|1;1|gastric|위의|stomach|2;1|cerebral|뇌의|brain|3;1|osteo-|뼈를 뜻하는 접두어 (osteoporosis 골다공증)|bone|4;2|dyspnea|호흡곤란|lung|0;2|hematuria|혈뇨. 소변에 피가 섞여 나오는 것|blood|1;2|nausea|메스꺼움|stomach|2;3|hypertension|고혈압|heart|1;3|anemia|빈혈. 적혈구나 헤모글로빈이 부족한 상태|blood|3"
+  .split(";").forEach((r,i)=>{const [b,en,ko,il,d]=r.split("|");D.words.push({id:i+1,bid:+b,en,ko,ill:il,date:iso(+d)})});
+}
+const save=()=>{try{localStorage.setItem("mw-v1",JSON.stringify(D))}catch(e){}};
+const S={mode:"one",imp:null,tab:"home",bid:0,sort:"book",i:0,flip:false,arm:null,msg:"",ill:"steth",abid:1,date:""};
+const book=id=>D.books.find(b=>b.id===id)||{name:"미분류",color:"#8a9aa6"};
+function list(){
+  const bi=id=>D.books.findIndex(b=>b.id===id);
+  return D.words.filter(x=>!S.bid||x.bid===S.bid).sort(S.sort==="date"?(a,b)=>b.date.localeCompare(a.date)||b.id-a.id:(a,b)=>bi(a.bid)-bi(b.bid)||a.en.localeCompare(b.en));
+}
+const cnt=id=>D.words.filter(w=>w.bid===id).length;
+
+function vHome(){
+  const t=TODAY(),rec=[...D.words].sort((a,b)=>b.date.localeCompare(a.date)||b.id-a.id).slice(0,5);
+  return `<section class="hero card"><div class="wh">${WHALE}</div><h1>나만의 단어장</h1><p>잘 외워지지 않는 의학용어를 모아 두고, 버스에서나 짬짬이 꺼내 보세요.</p><button class="pri" data-a="go" data-v="cards">단어장 열기</button></section>
+  <div class="stats"><div><b>${D.words.length}</b>전체 단어</div><div><b>${D.books.length}</b>책갈피</div><div><b>${D.words.filter(w=>w.date===t).length}</b>오늘 등록</div></div>
+  <div class="sh"><h2>책갈피</h2><button class="lk" data-a="go" data-v="books">관리</button></div>
+  <div class="chips">${D.books.map(b=>`<button class="chip" data-a="openBook" data-v="${b.id}"><i style="background:${b.color}"></i>${esc(b.name)}<span>${cnt(b.id)}</span></button>`).join("")||'<p class="mute">책갈피 탭에서 책갈피를 만들어 보세요.</p>'}</div>
+  <div class="sh"><h2>최근 등록 단어</h2></div>
+  ${rec.length?`<ul class="rl">${rec.map(w=>`<li><button data-a="openWord" data-v="${w.id}"><span class="th">${ill(w.ill,32)}</span><span class="tx"><b>${esc(w.en)}</b><small>${esc(w.ko)}</small></span><em>${w.date.slice(5)}</em></button></li>`).join("")}</ul>`:'<p class="mute">아직 등록한 단어가 없어요.</p>'}
+  <button class="pri wide" data-a="go" data-v="add">단어 등록하기</button>`;
+}
+function vCards(){
+  const L=list(),n=L.length;
+  if(S.i>=n)S.i=Math.max(n-1,0);
+  const top=`<div class="tb"><select id="sb" aria-label="책갈피 선택"><option value="0">전체 책갈피</option>${D.books.map(b=>`<option value="${b.id}"${b.id===S.bid?" selected":""}>${esc(b.name)}</option>`).join("")}</select><select id="ss" aria-label="정렬"><option value="book"${S.sort==="book"?" selected":""}>책갈피순</option><option value="date"${S.sort==="date"?" selected":""}>등록일순</option></select><button class="ic" data-a="speak" aria-label="영어 발음 듣기"${"speechSynthesis" in window?"":" disabled"}>🔊</button></div>`;
+  if(!n)return top+`<div class="empty card">${WHALE}<p>이 책갈피에는 아직 단어가 없어요.</p><button class="pri" data-a="go" data-v="add">단어 등록하기</button></div>`;
+  const w=L[S.i],b=book(w.bid),tag=`<span class="bt" style="background:${b.color}">${esc(b.name)}</span>`;
+  return top+`<div class="stage"><div class="c3${S.flip?" flip":""}" data-a="flip" role="button" tabindex="0" aria-label="카드 뒤집기"><div class="face">${tag}<div class="ib">${ill(w.ill,110)}</div><h2 class="en">${esc(w.en)}</h2><small>눌러서 뜻 보기</small></div><div class="face bk">${tag}<div class="ib sm">${ill(w.ill,56)}</div><p class="ko">${esc(w.ko)}</p><small>${w.date} 등록</small></div></div></div>
+  <div class="nav2"><button class="sec" data-a="prev">‹ 이전</button><span>${S.i+1} / ${n}</span><button class="sec" data-a="next">다음 ›</button></div>
+  <button class="lk del${S.arm==="w"+w.id?" arm":""}" data-a="delWord" data-v="${w.id}">${S.arm==="w"+w.id?"한 번 더 누르면 삭제돼요":"이 단어 삭제"}</button>`;
+}
+function vAdd(){
+  const sg=(k,t)=>`<button data-a="mode" data-v="${k}" class="${S.mode===k?"on":""}" aria-pressed="${S.mode===k}">${t}</button>`;
+  return `<h1 class="pt">단어 등록</h1><div class="seg">${sg("one","직접 입력")}${sg("xl","엑셀로 등록")}</div>`+(S.mode==="xl"?vXl():vOne());
+}
+function vOne(){
+  const nw=S.abid==="new"||!D.books.length;
+  return `<form id="wf" class="card fm">
+  <label>책갈피<select id="fb">${D.books.map(b=>`<option value="${b.id}"${!nw&&b.id===S.abid?" selected":""}>${esc(b.name)}</option>`).join("")}<option value="new"${nw?" selected":""}>＋ 새 책갈피 만들기</option></select></label>
+  <label id="nbw"${nw?"":" hidden"}>새 책갈피 이름<input id="nb" maxlength="12" autocomplete="off"></label>
+  <label>단어 (영어)<input id="fe" required autocomplete="off" autocapitalize="off" placeholder="예: hematuria"></label>
+  <label>설명<textarea id="fk" required rows="3" placeholder="예: 혈뇨. 소변에 피가 섞여 나오는 것"></textarea></label>
+  <fieldset><legend>삽화</legend><div class="ig">${Object.entries(ILL).map(([k,v])=>`<button type="button" class="io${k===S.ill?" on":""}" data-a="pickIll" data-v="${k}" aria-pressed="${k===S.ill}" aria-label="${v[0]}">${ill(k,34)}<small>${v[0]}</small></button>`).join("")}</div></fieldset>
+  <label>등록일<input id="fd" type="date" value="${S.date||TODAY()}"></label>
+  <button class="pri">단어 등록</button><p id="msg" aria-live="polite">${esc(S.msg)}</p></form>`;
+}
+function vBooks(){
+  return `<h1 class="pt">책갈피</h1><form id="bf" class="card fm"><label>새 책갈피<input id="bn" maxlength="12" required autocomplete="off" placeholder="예: 심장내과"></label><button class="pri">책갈피 추가</button></form>
+  <ul class="bl">${D.books.map(b=>{const c=cnt(b.id),ar=S.arm==="b"+b.id;return `<li class="card"><i class="dot" style="background:${b.color}"></i><div class="bi"><input class="bname" data-id="${b.id}" value="${esc(b.name)}" maxlength="12" aria-label="책갈피 이름"><small>단어 ${c}개</small></div><button class="sec" data-a="openBook" data-v="${b.id}">보기</button><button class="lk${ar?" arm":""}" data-a="delBook" data-v="${b.id}">${ar?(c?`단어 ${c}개도 삭제돼요. 한 번 더`:"한 번 더"):"삭제"}</button></li>`}).join("")||'<p class="mute">책갈피가 없어요.</p>'}</ul>`;
+}
+const ILLNAMES=Object.fromEntries(Object.entries(ILL).map(([k,v])=>[v[0],k]));
+function guessIll(t){
+  const m=[[/심장|심근|심방|심실|혈압|맥박/,"heart"],[/폐|호흡|기관지|가래|기침/,"lung"],[/뇌|신경|두통|경련/,"brain"],[/신장|콩팥|소변|요로|방광/,"kidney"],[/뼈|골절|관절|골다공/,"bone"],[/위의|위염|위장|소화|구토|메스꺼|복통/,"stomach"],[/혈|빈혈|출혈|적혈구/,"blood"],[/주사|투여|접종/,"syringe"],[/투약|복용|약물|진통제|항생제|알약/,"pill"]];
+  const f=m.find(x=>x[0].test(t));return f?f[1]:"steth";
+}
+function normDate(v){
+  const s=String(v||"").trim();if(!s)return TODAY();
+  const m=s.match(/^(\d{4})[-./](\d{1,2})[-./](\d{1,2})/);
+  if(m)return m[1]+"-"+m[2].padStart(2,"0")+"-"+m[3].padStart(2,"0");
+  const d=new Date(s);if(isNaN(d))return TODAY();
+  return new Date(d-d.getTimezoneOffset()*6e4).toISOString().slice(0,10);
+}
+function parseSheet(data,csv){
+  if(typeof XLSX==="undefined"){S.imp=null;S.msg="엑셀 읽기 도구를 불러오지 못했어요. 인터넷 연결을 확인하고 다시 열어 주세요.";return render()}
+  try{
+    const wb=XLSX.read(data,csv?{type:"string"}:{type:"array"}),ws=wb.Sheets[wb.SheetNames[0]];
+    let rows=XLSX.utils.sheet_to_json(ws,{header:1,raw:false,defval:""});
+    const c=i=>String(rows[0]&&rows[0][i]||"").trim().toLowerCase();
+    if(rows.length&&(["책갈피","분류","bookmark"].includes(c(0))||["단어","영어","word","english"].includes(c(1))))rows=rows.slice(1);
+    const have=new Set(D.words.map(w=>book(w.bid).name+"|"+w.en.toLowerCase())),names=new Set(D.books.map(b=>b.name));
+    const items=[],nb=new Set();let dup=0,bad=0;
+    rows.forEach(r=>{
+      const bn=String(r[0]||"").trim()||"기타",en=String(r[1]||"").trim(),ko=String(r[2]||"").trim();
+      if(!en||!ko){if(r.some(x=>String(x).trim()))bad++;return}
+      const k=bn+"|"+en.toLowerCase();
+      if(have.has(k)){dup++;return}
+      have.add(k);if(!names.has(bn))nb.add(bn);
+      items.push({bn,en,ko,ill:ILLNAMES[String(r[4]||"").trim()]||guessIll(ko),date:normDate(r[3])});
+    });
+    S.imp={items,nb:[...nb],dup,bad};
+    S.msg=items.length?"":(dup||bad?"등록할 새 단어가 없어요. 이미 있는 단어 "+dup+"개, 빈 칸이 있는 줄 "+bad+"개예요.":"읽을 수 있는 단어가 없어요. 열 순서를 확인해 주세요.");
+  }catch(e){S.imp=null;S.msg="파일을 읽지 못했어요. .xlsx, .xls, .csv 파일이 맞는지 확인해 주세요."}
+  render();
+}
+function vXl(){
+  const p=S.imp;
+  return `<div class="card fm"><p class="mute" style="margin:0">엑셀 파일(.xlsx, .xls, .csv)의 첫 번째 시트를 읽어요. 첫 줄은 제목 줄이에요.</p>
+  <div class="xt"><table><tr><th>책갈피</th><th>단어</th><th>설명</th><th>등록일</th></tr><tr><td>증상</td><td>dyspnea</td><td>호흡곤란</td><td>2026-10-06</td></tr><tr><td>해부</td><td>renal</td><td>신장의</td><td></td></tr></table></div>
+  <p class="mute" style="margin:0">A열 책갈피, B열 단어(영어), C열 설명은 꼭 필요해요. D열 등록일을 비우면 오늘 날짜로 등록돼요. E열에 삽화 이름(심장, 폐, 뇌 등)을 적으면 그 삽화를 쓰고, 비우면 설명을 보고 알맞은 삽화를 골라요. CSV는 UTF-8로 저장해 주세요.</p>
+  <label class="fl"><input type="file" id="xf" class="vh" accept=".xlsx,.xls,.csv"><span class="pri">엑셀 파일 선택</span></label>
+  ${S.msg?`<p id="msg" role="status">${esc(S.msg)}</p>`:""}
+  ${p&&p.items.length?`<div class="pv"><h2>${p.items.length}개 단어를 찾았어요</h2>
+  ${p.nb.length?`<small>새 책갈피 ${p.nb.length}개가 만들어져요: ${esc(p.nb.join(", "))}</small>`:""}
+  ${p.dup||p.bad?`<small>건너뜀: 이미 있는 단어 ${p.dup}개, 빈 칸이 있는 줄 ${p.bad}개</small>`:""}
+  <ul class="rl">${p.items.slice(0,5).map(w=>`<li><div class="rr"><span class="th">${ill(w.ill,28)}</span><span class="tx"><b>${esc(w.en)}</b><small>${esc(w.bn)}, ${esc(w.ko)}</small></span></div></li>`).join("")}</ul>
+  ${p.items.length>5?`<small>외 ${p.items.length-5}개</small>`:""}
+  <button class="pri" data-a="impGo">${p.items.length}개 단어 등록</button></div>`:""}</div>`;
+}
+const V={home:vHome,cards:vCards,add:vAdd,books:vBooks};
+function render(){
+  $("#app").innerHTML=V[S.tab]();
+  document.querySelectorAll(".bn button").forEach(b=>{const on=b.dataset.v===S.tab;b.classList.toggle("on",on);on?b.setAttribute("aria-current","page"):b.removeAttribute("aria-current")});
+}
+function speak(){
+  const w=list()[S.i];if(!w||!("speechSynthesis" in window))return;
+  speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(w.en);u.lang="en-US";u.rate=.85;speechSynthesis.speak(u);
+}
+function addWord(){
+  let bid=$("#fb").value;
+  if(bid==="new"){
+    const nm=$("#nb").value.trim();
+    if(!nm){$("#msg").textContent="새 책갈피 이름을 입력해 주세요.";return}
+    const b={id:D.nid++,name:nm,color:COLORS[D.books.length%5]};D.books.push(b);bid=b.id;
+  }else bid=+bid;
+  const en=$("#fe").value.trim(),ko=$("#fk").value.trim();if(!en||!ko)return;
+  D.words.push({id:D.nid++,bid,en,ko,ill:S.ill,date:$("#fd").value||TODAY()});
+  S.abid=bid;S.date=$("#fd").value;S.msg="등록됨: "+en;save();render();$("#fe").focus();
+}
+function act(a,v,el){
+  const to=t=>{S.tab=t;S.arm=null;S.msg="";S.flip=false;S.imp=null;render();scrollTo(0,0)};
+  if(a==="go")to(v);
+  else if(a==="openBook"){S.bid=+v;S.i=0;to("cards")}
+  else if(a==="openWord"){S.bid=0;S.sort="date";S.i=Math.max(list().findIndex(w=>w.id===+v),0);to("cards")}
+  else if(a==="flip")S.flip=el.classList.toggle("flip");
+  else if(a==="prev"||a==="next"){const n=list().length;if(!n)return;S.i=(S.i+(a==="next"?1:n-1))%n;S.flip=false;S.arm=null;render()}
+  else if(a==="speak")speak();
+  else if(a==="pickIll"){S.ill=v;document.querySelectorAll(".io").forEach(b=>{const on=b.dataset.v===v;b.classList.toggle("on",on);b.setAttribute("aria-pressed",on)})}
+  else if(a==="mode"){S.mode=v;S.imp=null;S.msg="";render()}
+  else if(a==="impGo"&&S.imp){
+    const p=S.imp;
+    p.items.forEach(w=>{
+      let b=D.books.find(x=>x.name===w.bn);
+      if(!b){b={id:D.nid++,name:w.bn,color:COLORS[D.books.length%5]};D.books.push(b)}
+      D.words.push({id:D.nid++,bid:b.id,en:w.en,ko:w.ko,ill:w.ill,date:w.date});
+    });
+    S.msg=p.items.length+"개 단어를 등록했어요.";S.imp=null;save();render();
+  }
+  else if(a==="delWord"){if(S.arm==="w"+v){D.words=D.words.filter(w=>w.id!==+v);S.arm=null;save()}else S.arm="w"+v;render()}
+  else if(a==="delBook"){
+    if(S.arm==="b"+v){D.books=D.books.filter(b=>b.id!==+v);D.words=D.words.filter(w=>w.bid!==+v);if(S.bid===+v)S.bid=0;S.arm=null;save()}else S.arm="b"+v;
+    render();
+  }
+}
+document.addEventListener("click",e=>{const el=e.target.closest("[data-a]");if(el)act(el.dataset.a,el.dataset.v,el)});
+document.addEventListener("keydown",e=>{if((e.key==="Enter"||e.key===" ")&&e.target.classList&&e.target.classList.contains("c3")){e.preventDefault();act("flip",null,e.target)}});
+document.addEventListener("submit",e=>{
+  e.preventDefault();
+  if(e.target.id==="wf")addWord();
+  else if(e.target.id==="bf"){const v=$("#bn").value.trim();if(!v)return;D.books.push({id:D.nid++,name:v,color:COLORS[D.books.length%5]});save();render()}
+});
+document.addEventListener("change",e=>{
+  const t=e.target;
+  if(t.id==="sb"){S.bid=+t.value;S.i=0;S.flip=false;render()}
+  else if(t.id==="ss"){S.sort=t.value;S.i=0;S.flip=false;render()}
+  else if(t.id==="fb"){S.abid=t.value==="new"?"new":+t.value;$("#nbw").hidden=t.value!=="new"}
+  else if(t.id==="xf"){
+    const f=t.files[0];if(!f)return;
+    const csv=/\.csv$/i.test(f.name),r=new FileReader();
+    r.onload=()=>parseSheet(r.result,csv);
+    csv?r.readAsText(f):r.readAsArrayBuffer(f);
+  }
+  else if(t.classList.contains("bname")){const b=D.books.find(x=>x.id===+t.dataset.id),v=t.value.trim();if(b&&v){b.name=v;save()}else if(b)t.value=b.name}
+});
+let tx=null;
+document.addEventListener("touchstart",e=>{tx=e.target.closest(".stage")?e.touches[0].clientX:null},{passive:true});
+document.addEventListener("touchend",e=>{if(tx==null)return;const dx=e.changedTouches[0].clientX-tx;tx=null;if(Math.abs(dx)>60)act(dx>0?"prev":"next")},{passive:true});
+render();
+</script>
+</body>
+</html>
